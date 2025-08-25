@@ -17,29 +17,6 @@ Public Class Form1
 
     End Sub
 
-    'Private Sub OpenFileDialog1_FileOk(sender As Object, e As ComponentModel.CancelEventArgs) Handles OpenFileDialog1.FileOk
-    '    ' 1) Ruta de la carpeta Fotos junto al EXE
-    '    Dim fotosDir As String = Path.Combine(Application.StartupPath, "Fotos")
-
-    '    ' 2) Crear carpeta si no existe
-    '    If Not Directory.Exists(fotosDir) Then
-    '        Directory.CreateDirectory(fotosDir)
-    '    End If
-
-    '    ' 3) Rutas origen y destino
-    '    Dim sourcePath As String = OpenFileDialog1.FileName
-    '    Dim fileName As String = Path.GetFileName(sourcePath)
-    '    Dim destPath As String = Path.Combine(fotosDir, fileName)
-
-    '    ' 4) Copiar archivo (sobrescribir si ya existía)
-    '    File.Copy(sourcePath, destPath, overwrite:=True)
-
-    '    ' 5) Actualizar controles
-    '    TBFoto.Text = destPath
-    '    PBAvatar.SizeMode = PictureBoxSizeMode.Zoom
-    '    PBAvatar.Image = Image.FromFile(destPath)
-    'End Sub
-
     Private Sub BFoto_Click(sender As Object, e As EventArgs) Handles BFoto.Click
         OpenFileDialog1.Filter = "Archivos Imagenes|*.jpg|Archivos Imagenes|*.bmp|Archivos Imagenes|*.png"
         OpenFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
@@ -73,7 +50,7 @@ Public Class Form1
     End Sub
 
     Private Sub DGVDatos_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDatos.CellContentClick
-        ' Verificar que se hizo clic en una fila válida y en la columna "Eliminar"
+        ' Verificar que se hizo clic en una fila valida y en la columna "Eliminar"
         If e.RowIndex >= 0 AndAlso DGVDatos.Columns(e.ColumnIndex).Name = "Eliminar" Then
             Dim respuesta As MsgBoxResult = MsgBox("¿Desea eliminar este registro?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "Confirmar eliminación")
             If respuesta = MsgBoxResult.Yes Then
@@ -83,7 +60,7 @@ Public Class Form1
     End Sub
 
     Private Sub BAgregar_Click(sender As Object, e As EventArgs) Handles BAgregar.Click
-        ' Validar que no estén vacíos
+        ' Validar que no esten vacios
         If TBNombre.Text = "" Or TBApellido.Text = "" Or TBSaldo.Text = "" Then
             MsgBox("Debe Completar todos los campos", MsgBoxStyle.Critical, "Error")
             Exit Sub
@@ -97,42 +74,20 @@ Public Class Form1
             sexoSeleccionado = "Mujer"
         End If
 
-        '' Antes de agregar la fila:
-        'Dim imagenAUsar As Image
-        'Dim rutaAUsar As String
-        'Dim DefaultImagePath As String = System.IO.Path.Combine(Application.StartupPath, "Fotos", "Usuario.png")
-
-        'If String.IsNullOrEmpty(TBFoto.Text) OrElse PBAvatar.Image Is Nothing Then
-        '    ' El usuario NO eligió foto: usamos la default
-        '    rutaAUsar = DefaultImagePath
-        '    imagenAUsar = Image.FromFile(DefaultImagePath)
-        'Else
-        '    ' El usuario eligió foto: respetamos su selección
-        '    rutaAUsar = TBFoto.Text
-        '    imagenAUsar = PBAvatar.Image
-        'End If
-
-        ' Verificar si no se seleccionó foto y asignar ruta por defecto
+        ' Verificar si no se selecciono foto y asignar ruta por defecto
         Dim rutaFoto As String = If(String.IsNullOrWhiteSpace(TBFoto.Text), Path.Combine(Application.StartupPath, "Fotos", "Usuario.png"), TBFoto.Text)
         TBFoto.Text = rutaFoto
 
-        ' 2) Agregás la fila y obtenés su índice
         Dim idx As Integer = DGVDatos.Rows.Add(TBNombre.Text, TBApellido.Text, DTPFechaNacimiento.Text,
                                                sexoSeleccionado, Nothing, TBSaldo.Text, PBAvatar.Image, TBFoto.Text)
 
-        ' 3) Obtenés la fila recién creada
         Dim nuevaFila As DataGridViewRow = DGVDatos.Rows(idx)
 
-        ' 4) Si el saldo < 50, la pintás de rojo
         Dim saldo As Integer = TBSaldo.Text
         If saldo < 50D Then
             nuevaFila.DefaultCellStyle.BackColor = Color.Red
         End If
 
-        ' 5) Opcional: scroll automático para mostrar la nueva fila
-        'DGVDatos.FirstDisplayedScrollingRowIndex = idx
-
-        ' Muestro la imagen por defecto en el PictureBox
         PBAvatar.SizeMode = PictureBoxSizeMode.Zoom
         PBAvatar.Image = CType(DGVDatos.Rows(idx).Cells("Foto").EditedFormattedValue, Image)
     End Sub
